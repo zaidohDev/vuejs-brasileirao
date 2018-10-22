@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>School of Net - Instância Vue</title>
+</head>
+<body>
+<div id="app">
+    {{ "luiz carlos" }}
+    <input type="text" v-model="variavel">{{variavel}}
+    <input type="text" v-model="variavel2">{{variavel2}}
+    <p>
+        {{parseInt(variavel) + parseInt(variavel2)}}
+    </p>
+</div>
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+<!-- production version, optimized for size and speed -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17"></script>-->
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            variavel: 3,
+            variavel2: 10
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Brasileirão 2018</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<style type="text/css">
+		.escudo {
+			width: 30px;
+			height: 30px;
+		}
+	</style>
+</head>
+<body>
+<div id="app" class="container"> 
+		<div class="jumbotron">
+			<h3>Brasileirão 2018 - Série A</h3>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+			<button class="btn btn-outline-primary" @click="CriarNovoJogo">Novo Jogo</button> 
+		</div>	
+		</div>
+
+		<div></div>
+
+		<form class="form-inline">
+		
+		<input type="text" class="form-control col-md-1" v-model="novoJogo.casa.gols" >
+			{{ novoJogo.casa.time ? novoJogo.casa.time.nome: ''}}
+			<img :src="novoJogo.casa.time ? novoJogo.casa.time.escudo: ''" alt="" class="escudo">
+			<span>x</span>
+			<img :src="novoJogo.fora.time ? novoJogo.fora.time.escudo: ''" alt="" class="escudo">
+			{{ novoJogo.fora.time ? novoJogo.fora.time.nome: ''}}
+		<input type="text" class="form-control col-md-1" v-model="novoJogo.fora.gols" >
+		
+		
+		<div>
+			<button type="button" class="btn btn-outline-primary" @click="fimJogo" style="float: left;">Fim de Jogo
+			</button>
+		</div>
+		</form>
+		<table class="table table-hover">
+		  <thead>
+		    <tr>
+
+		      <th scope="col">Nome</th>
+		      <th scope="col">Pontos</th>
+		      <th scope="col">GP</th>
+		      <th scope="col">GS</th>
+		      <th scope="col">SG</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr v-for="time in times">
+		      <td>
+		      	<img :src="time.escudo" alt="" class="escudo">
+		      	{{time.nome}}		
+		      </td>
+		      <td>{{time.pontos}}</td>
+		      <td>{{time.gp}}</td>
+		      <td>{{time.gs}}</td>
+		      <td>{{time.saldo}}</td>
+		    </tr>
+		  </tbody>
+		</table>
+	<!-- <input type="text" :value="gols" id="gols + id" @input="gols=$event.target.value"> -->
+	
+</div>
+
+
+
+
+
+<!-- development version, includes helpful console warnings  -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+<!-- production version, optimized for size and speed  -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17"></script> -->
+<script>
+	class Time{
+		constructor(nome, escudo){
+			this.nome = nome;
+			this.escudo = escudo;
+			this.pontos = 0;
+			this.gp = 0;
+			this.gs = 0;
+			this.saldo = 0;
+		}
+
+		fimJogo(timeVisitante, golsMarcados, golsSofridos){
+			if(this.foiEmpate(golsMarcados, golsSofridos)){
+				this.empate(golsMarcados, golsSofridos);
+				timeVisitante.empate(golsMarcados, golsSofridos)
+			}
+			if(this.foiVitoria(golsMarcados, golsSofridos)){
+				this.vitoria(golsMarcados, golsSofridos);
+				timeVisitante.derrota(golsSofridos, golsMarcados)
+			}else{
+				this.derrota(golsMarcados, golsSofridos);
+				timeVisitante.vitoria(golsSofridos, golsMarcados)
+
+			}
+		}
+
+		foiEmpate( golsMarcados, golsSofridos){
+			return golsMarcados === golsSofridos
+		}
+
+		foiVitoria(golsMarcados, golsSofridos){
+			return golsMarcados > golsSofridos
+		}
+
+		foiDerrota(golsMarcados, golsSofridos){
+			return golsMarcados < golsSofridos
+		}
+
+		empate(golsMarcados, golsSofridos){
+			this.atualizarInfo(1, golsMarcados, golsSofridos)	
+		}
+
+		vitoria(golsMarcados, golsSofridos){
+			this.atualizarInfo(3, golsMarcados, golsSofridos)	
+		}
+
+		derrota(golsMarcados, golsSofridos){
+			this.atualizarInfo(0, golsMarcados, golsSofridos)	
+		}
+
+		atualizarInfo(pontos, golsMarcados, golsSofridos){
+			this.pontos += pontos
+			this.gp += golsMarcados
+			this.gs += golsSofridos
+			this.saldo += this.gp - this.gs;
+		}
+	}
+
+	new Vue({
+		el: "#app",
+		data: {
+			gols: 0,
+			times: [
+			 	new Time('palmeiras', 'assets/palmeiras_60x60.png'),
+                new Time('Internacional', 'assets/internacional_60x60.png'),
+                new Time('Flamengo', 'assets/flamengo_60x60.png'),
+                new Time('Atlético-MG', 'assets/atletico_mg_60x60.png'),
+                new Time('Santos', 'assets/santos_60x60.png'),
+                new Time('Botafogo', 'assets/botafogo_60x60.png'),
+                new Time('Atlético-PR', 'assets/atletico-pr_60x60.png'),
+                new Time('Corinthians', 'assets/corinthians_60x60.png'),
+                new Time('Grêmio', 'assets/gremio_60x60.png'),
+                new Time('Fluminense', 'assets/fluminense_60x60.png'),
+                new Time('Bahia', 'assets/bahia_60x60.png'),
+                new Time('Chapecoense', 'assets/chapecoense_60x60.png'),
+                new Time('São Paulo', 'assets/sao_paulo_60x60.png'),
+                new Time('Cruzeiro', 'assets/cruzeiro_60x60.png'),
+                new Time('Sport', 'assets/sport_60x60.png'),
+                new Time('Ceará', 'assets/ceara_60x60.png'),
+                new Time('Vitória', 'assets/vitoria_60x60.png'),
+                new Time('Vasco', 'assets/vasco_60x60.png'),
+                new Time('América-MG', 'assets/america_mg_60x60.png'),
+                new Time('Paraná', 'assets/parana_60x60.png'),
+			],
+			novoJogo:{
+				casa: {
+					time: null,
+					gols: 0
+				},
+				fora: {
+					time: null,
+					gols: 0
+				}
+			}
+		},
+		methods: {
+			ShowAlert(){
+				alert("fim de jogo")
+			},
+			PegarValor($event){
+				console.log($event)
+			},
+			CriarNovoJogo(){
+				var indiceCasa = Math.floor(Math.random()*20),
+					indiceFora = Math.floor(Math.random()*20)
+				this.novoJogo.casa.time = this.times[indiceCasa];
+				this.novoJogo.casa.gols=0;
+				this.novoJogo.fora.time = this.times[indiceFora];
+				this.novoJogo.fora.gols=0;
+				console.log(this.novoJogo);
+			},
+			fimJogo(){
+				var golsMarcados = parseInt(this.novoJogo.casa.gols);
+				var golsSofridos = parseInt(this.novoJogo.fora.gols);
+				var timeAdversario = this.novoJogo.fora.time;
+				var timeCasa = this.novoJogo.casa.time;
+				timeCasa.fimJogo(timeAdversario, golsMarcados, golsSofridos);
+			}
+		}
+	})
+</script>
+</body>
+</html>
