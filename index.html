@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>Brasileirão 2018</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<style type="text/css">
@@ -12,69 +12,88 @@
 		}
 	</style>
 </head>
+
 <body>
 <div id="app" class="container"> 
+		
 		<div class="jumbotron">
 			<h3>Brasileirão 2018 - Série A</h3>
 		</div>
+
 		<div class="row">
 			<div class="col-md-12">
-			<button class="btn btn-outline-primary" @click="CriarNovoJogo">Novo Jogo</button> 
-		</div>	
+				<button class="btn btn-outline-primary" @click="CriarNovoJogo">Novo Jogo</button> 
+			</div>	
 		</div>
 
-		<div></div>
-
-		<form class="form-inline">
-		
-		<input type="text" class="form-control col-md-1" v-model="novoJogo.casa.gols" >
-			{{ novoJogo.casa.time ? novoJogo.casa.time.nome: ''}}
-			<img :src="novoJogo.casa.time ? novoJogo.casa.time.escudo: ''" alt="" class="escudo">
-			<span>x</span>
-			<img :src="novoJogo.fora.time ? novoJogo.fora.time.escudo: ''" alt="" class="escudo">
-			{{ novoJogo.fora.time ? novoJogo.fora.time.nome: ''}}
-		<input type="text" class="form-control col-md-1" v-model="novoJogo.fora.gols" >
-		
-		
-		<div>
-			<button type="button" class="btn btn-outline-primary" @click="fimJogo" style="float: left;">Fim de Jogo
-			</button>
+		<div class="row">
+			<div class="col-md-12" v-if="visao!='tabela'"> 
+				<form class="form-inline" >
+				<input type="text" class="form-control col-md-1" v-model="novoJogo.casa.gols" >
+					{{ novoJogo.casa.time ? novoJogo.casa.time.nome: ''}}
+				<img :src="novoJogo.casa.time ? novoJogo.casa.time.escudo: ''" alt="" class="escudo">
+				<span>x</span>
+				<img :src="novoJogo.fora.time ? novoJogo.fora.time.escudo: ''" alt="" class="escudo">
+					{{ novoJogo.fora.time ? novoJogo.fora.time.nome: ''}}
+				<input type="text" class="form-control col-md-1" v-model="novoJogo.fora.gols" >
+				<div>
+					<button type="button" class="btn btn-outline-primary" @click="fimJogo" style="float: left;">Fim de Jogo</button>
+				</div>
+				</form>
+			</div>
+			
+			<div class="col-md-12" v-if="visao=='tabela'">
+				<input type="text" class="form-control" v-model="busca">
+				<table class="table table-hover">
+			  	<thead>
+			    	<tr>
+				     	<th scope="col">Nome</th>
+				     	<th scope="col" v-for="(coluna, indice) in ordem.colunas">
+							<a href="#" @click.prevent="ordenar(indice)">
+								{{coluna | ucwords2}}
+							</a>
+				     	</th>
+			    	</tr>
+			  	</thead>
+			  	<tbody>
+				    <tr v-for="time in timesFiltrados">
+				      	<td>
+				      	<img :src="time.escudo" alt="" class="escudo">
+				      	{{time.nome | ucwords }}</td>
+				      	<td>{{time.pontos}}</td>
+				      	<td>{{time.gp}}</td>
+				      	<td>{{time.gs}}</td>
+				      	<!-- <td>{{time | saldo}}</td> -->
+				      	<td>{{time.saldo}}</td>
+				    </tr>
+			  	</tbody>
+			</table>
+				<div class="jumbotron">
+					<h3>Zona da Libertadores</h3>
+					<ul>
+						<li v-for="time in timesLibertadores">
+							<img :src="time.escudo" alt="" class="escudo">
+							{{time.nome | ucwords }}
+						</li>
+					</ul>
+				</div>
+				<div class="jumbotron">
+					<h3>Zona da Rebaixamento</h3>
+					<ul>
+						<li v-for="time in timesRebaixados">
+							<img :src="time.escudo" alt="" class="escudo">
+							{{time.nome | ucwords }}
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
-		</form>
-		<table class="table table-hover">
-		  <thead>
-		    <tr>
-
-		      <th scope="col">Nome</th>
-		      <th scope="col">Pontos</th>
-		      <th scope="col">GP</th>
-		      <th scope="col">GS</th>
-		      <th scope="col">SG</th>
-		    </tr>
-		  </thead>
-		  <tbody>
-		    <tr v-for="time in times">
-		      <td>
-		      	<img :src="time.escudo" alt="" class="escudo">
-		      	{{time.nome}}		
-		      </td>
-		      <td>{{time.pontos}}</td>
-		      <td>{{time.gp}}</td>
-		      <td>{{time.gs}}</td>
-		      <td>{{time.saldo}}</td>
-		    </tr>
-		  </tbody>
-		</table>
 	<!-- <input type="text" :value="gols" id="gols + id" @input="gols=$event.target.value"> -->
-	
 </div>
-
-
-
-
 
 <!-- development version, includes helpful console warnings  -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
 
 <!-- production version, optimized for size and speed  -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17"></script> -->
@@ -93,6 +112,7 @@
 			if(this.foiEmpate(golsMarcados, golsSofridos)){
 				this.empate(golsMarcados, golsSofridos);
 				timeVisitante.empate(golsMarcados, golsSofridos)
+				return;
 			}
 			if(this.foiVitoria(golsMarcados, golsSofridos)){
 				this.vitoria(golsMarcados, golsSofridos);
@@ -132,7 +152,7 @@
 			this.pontos += pontos
 			this.gp += golsMarcados
 			this.gs += golsSofridos
-			this.saldo += this.gp - this.gs;
+			this.saldo = this.gp - this.gs;
 		}
 	}
 
@@ -140,6 +160,11 @@
 		el: "#app",
 		data: {
 			gols: 0,
+			busca: '',
+			ordem:{ 
+				colunas: ['pontos', 'gp', 'gs', 'saldo'],
+				orientacao: ['desc', 'desc', 'asc', 'desc']
+			},
 			times: [
 			 	new Time('palmeiras', 'assets/palmeiras_60x60.png'),
                 new Time('Internacional', 'assets/internacional_60x60.png'),
@@ -171,6 +196,26 @@
 					time: null,
 					gols: 0
 				}
+			},
+			
+			visao: 'tabela'
+
+				 
+		},
+		computed: {
+			timesLibertadores(){
+				return this.times.slice(0,6)
+			},
+			timesRebaixados(){
+				return this.times.slice(16,20)
+			},
+			timesFiltrados(){
+				var times = _.orderBy(this.times, this.ordem.colunas, this.ordem.orientacao)
+				var self = this;
+				return _.filter(times, function(time){
+					var busca = self.busca.toLowerCase();
+					return time.nome.toLowerCase().indexOf(busca) >= 0;
+				})
 			}
 		},
 		methods: {
@@ -188,6 +233,7 @@
 				this.novoJogo.fora.time = this.times[indiceFora];
 				this.novoJogo.fora.gols=0;
 				console.log(this.novoJogo);
+				this.visao = 'placar'; 
 			},
 			fimJogo(){
 				var golsMarcados = parseInt(this.novoJogo.casa.gols);
@@ -195,8 +241,26 @@
 				var timeAdversario = this.novoJogo.fora.time;
 				var timeCasa = this.novoJogo.casa.time;
 				timeCasa.fimJogo(timeAdversario, golsMarcados, golsSofridos);
+				this.visao = 'tabela';
+			},
+			ordenar(indice){
+				//this.ordem.orientacao[indice]=this.ordem.orientacao[indice] == 'desc'?'asc':'desc';
+				this.$set(this.ordem.orientacao,  indice, this.ordem.orientacao[indice] == 'desc'?'asc':'desc')
 			}
-		}
+			
+		},
+		filters:{
+				saldo(time){
+					return time.gp - time.gs
+				},
+				ucwords(valor){
+					return valor.charAt(0).toUpperCase()+valor.slice(1)
+				},
+				ucwords2(valor){
+					return valor.toUpperCase()
+				},
+
+			}	
 	})
 </script>
 </body>
